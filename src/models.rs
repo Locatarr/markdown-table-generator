@@ -14,26 +14,18 @@ pub struct Application {
 }
 
 impl Application {
+    #[allow(dead_code)] // Because I like this function here, but we aren't currently using it anywhere
     pub fn new_from_strs(
         name: &str,
         description: &str,
         github_slug: Option<&str>,
         subreddit: Option<&str>,
     ) -> Self {
-        let github_slug: Option<String> = match github_slug {
-            Some(s) => Some(s.to_owned()),
-            None => None,
-        };
-        let subreddit: Option<String> = match subreddit {
-            Some(s) => Some(s.to_owned()),
-            None => None,
-        };
-
         Self {
             name: name.to_owned(),
             description: description.to_owned(),
-            github_slug,
-            subreddit,
+            github_slug: github_slug.map(|s| s.to_owned()),
+            subreddit: subreddit.map(|s| s.to_owned()),
         }
     }
 }
