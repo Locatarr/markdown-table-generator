@@ -5,7 +5,8 @@ use models::{Application, Applications};
 mod models;
 
 fn generate_md_table(apps: &Applications) -> String {
-    apps.applications
+    "| **Service** | **Usage** | **Github** | **Reddit** |\n|-------------|-----------|------------|------------|\n".to_owned() +
+    &apps.applications
         .iter()
         .sorted()
         .map(generate_md_row)
