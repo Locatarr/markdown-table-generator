@@ -1,5 +1,5 @@
 use clap::Parser;
-use std::path::PathBuf;
+use std::{path::PathBuf, process::ExitCode};
 
 use locatarr_json_to_readme::{generate_md_table, models::Applications};
 
@@ -14,7 +14,7 @@ struct Cli {
 
 /// You Already Know What It Is!
 /// The entry point function.
-fn main() {
+fn main() -> ExitCode {
     let cli = Cli::parse();
 
     // The following match checks for whether to create an input stream from a user provided
@@ -30,19 +30,26 @@ fn main() {
         (Some(_), "-") | (None, _) => Box::new(std::io::stdin()),
 
         // Otherwise, use the provided file path
-        (Some(file_path), _) => {
-            if let Ok(file) = std::fs::File::open(file_path) {
-                Box::new(file)
-            } else {
-                panic!("Could not read file");
+        (Some(file_path), _) => match std::fs::File::open(file_path) {
+            Ok(file) => Box::new(file),
+            Err(e) => {
+                eprintln!("could not read file: {}", e);
+                return 1.into();
             }
-        }
+        },
     };
 
-    let apps_json: Applications = serde_json::from_reader(input_stream)
-        .expect("Could not parse JSON. Improper format detected");
+    let apps_json: Applications = match serde_json::from_reader(input_stream) {
+        Ok(apps) => apps,
+        Err(e) => {
+            eprintln!("could not parse file: {e}");
+            return 2.into();
+        },
+    };
 
     let markdown_table = generate_md_table(&apps_json);
 
     println!("{}", markdown_table);
+
+    return 0.into();
 }
