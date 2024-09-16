@@ -33,7 +33,7 @@ fn main() -> ExitCode {
         (Some(file_path), _) => match std::fs::File::open(file_path) {
             Ok(file) => Box::new(file),
             Err(e) => {
-                eprintln!("could not read file: {}", e);
+                eprintln!("could not read file: {e}");
                 return 1.into();
             }
         },
@@ -49,7 +49,7 @@ fn main() -> ExitCode {
 
     let markdown_table = generate_md_table(&apps_json);
 
-    println!("{}", markdown_table);
+    println!("{markdown_table}");
 
     return 0.into();
 }
