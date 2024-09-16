@@ -1,5 +1,5 @@
 [package]
-name = "locatarr-json-to-readme"
+name = "locatarr-table-generator"
 version = "0.1.0"
 edition = "2021"
 

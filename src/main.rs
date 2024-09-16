@@ -1,7 +1,7 @@
 use clap::Parser;
 use std::{path::PathBuf, process::ExitCode};
 
-use locatarr_json_to_readme::{generate_md_table, models::Applications};
+use locatarr_table_generator::{generate_md_table, models::Applications};
 
 /// Cli derives a clap parser to allow us to handle command line arguments
 #[derive(Parser)]
