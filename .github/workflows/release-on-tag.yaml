@@ -1,0 +1,87 @@
+name: release
+
+on:
+  push:
+    tags: 
+      - "v[0-9]+"
+      - "v[0-9]+.[0-9]+"
+      - "v[0-9]+.[0-9]+.[0-9]+"
+      - "v[0-9]+.[0-9]+.[0-9]+-*"
+
+jobs:
+  build-artifacts:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-musl
+            os: ubuntu-latest
+          - target: x86_64-apple-darwin
+            os: macos-latest
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+            file_extension: .exe
+
+    name: ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    env:
+      binary_name: markdown-table-generator${{ matrix.file_extension }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Install host target
+        run: rustup target add ${{ matrix.target }}
+
+      - name: Install musl-tools
+        if: ${{ matrix.target == 'x86_64-unknown-linux-musl' }}
+        run: sudo apt-get install -y musl-tools
+
+      - name: Build
+        run: cargo build --release --target ${{ matrix.target }}
+
+      - name: Create Archive Folder
+        run: mkdir ${{ runner.os }}
+
+      - name: Copy Artifact
+        run: cp target/${{ matrix.target }}/release/${{ env.binary_name }} ${{ runner.os }}
+
+      - name: Create Tar Archive
+        run: tar -czf ${{ runner.os }}.tar.gz ${{ runner.os }}
+
+      - name: Store Archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{runner.os}}
+          path: ${{ runner.os }}.tar.gz
+
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs: [build-artifacts]
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Set PREREL environment variable
+        env:
+          TAG: ${{ github.ref }}
+        run: echo "PREREL=$(if [[ $TAG =~ "alpha" ]] || [[ $TAG =~ "beta" ]] || [[ $TAG =~ "rc" ]]; then echo "true"; else echo "false"; fi;)" >> $GITHUB_ENV
+
+      - name: Sanitize github.ref
+        run: echo "TAG_USED=$(echo ${GITHUB_REF:10})" >> $GITHUB_ENV
+
+      # - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          name: "Version ${{ env.TAG_USED }}"
+          prerelease: ${{ env.PREREL }}
+          generateReleaseNotes: true
+          artifacts: "Linux/Linux.tar.gz,macOS/macOS.tar.gz,Windows/Windows.tar.gz"
