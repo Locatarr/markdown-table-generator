@@ -40,7 +40,7 @@ jobs:
         run: sudo apt-get install -y musl-tools
 
       - name: Build
-        run: cargo build --release --target ${{ matrix.target }} --bin md-table-action --features action-runner-binary
+        run: cargo build --release --target ${{ matrix.target }} --bin md-table-action --features actions-runner-binary
 
       - name: Create Archive Folder
         run: mkdir ${{ runner.os }}
