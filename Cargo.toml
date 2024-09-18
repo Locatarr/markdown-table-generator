@@ -4,7 +4,21 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-clap = { version = "4.5.17", features = ["derive"] }
 itertools = "0.13.0"
 serde = { version = "1.0.210", features = ["derive"] }
+
+# Dependencies for the CLI binary
+clap = { version = "4.5.17", features = ["derive"] }
 serde_json = "1.0.128"
+
+# Dependencies just for GitHub Actions binary
+gha_main = { version = "0.0.5", optional = true }
+uuid = { version = "1.10.0", features = ["std", "v4"], optional = true }
+
+[features]
+actions-runner-binary = ["gha_main", "uuid"]
+
+[[bin]]
+name = "md-table-action"
+path = "src/bin/md-table-action.rs"
+required-features = ["actions-runner-binary"]

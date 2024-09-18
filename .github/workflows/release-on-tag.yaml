@@ -25,7 +25,7 @@ jobs:
     name: ${{ matrix.target }}
     runs-on: ${{ matrix.os }}
     env:
-      binary_name: markdown-table-generator${{ matrix.file_extension }}
+      binary_name: md-table-action${{ matrix.file_extension }}
 
     steps:
       - uses: actions/checkout@v4
@@ -40,7 +40,7 @@ jobs:
         run: sudo apt-get install -y musl-tools
 
       - name: Build
-        run: cargo build --release --target ${{ matrix.target }}
+        run: cargo build --release --target ${{ matrix.target }} --bin md-table-action --features action-runner-binary
 
       - name: Create Archive Folder
         run: mkdir ${{ runner.os }}
