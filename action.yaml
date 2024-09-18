@@ -24,7 +24,7 @@ runs:
     - name: Set reusable variables
       shell: bash
       run: |
-        echo "action_repo=md-table-action" >> $GITHUB_ENV
+        echo "action_repo=markdown-table-generator" >> $GITHUB_ENV
         echo "action_org=Locatarr" >> $GITHUB_ENV
         echo "binary_name=md-table-action" >> $GITHUB_ENV
 
