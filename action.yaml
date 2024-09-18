@@ -48,7 +48,7 @@ runs:
     - name: Download Action
       shell: bash
       run: |
-        gh release download ${{ steps.get_action_version.outputs.version }} --repo ${{ env.action_org }}/${{ env.action_repo }} --pattern '${{ runner.os }}.tar.gz'
+        gh release download ${{ steps.get_action_version.outputs.version }} --repo ${{ env.action_org }}/${{ env.action_repo }} --pattern '${{ runner.os }}.tar.gz' --clobber
         tar -xzf ${{ runner.os }}.tar.gz
       env:
         GITHUB_TOKEN: ${{ inputs.token }}
