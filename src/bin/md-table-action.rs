@@ -39,8 +39,8 @@ fn main() -> GitHubActionResult {
     std::fs::write(&out_file_path, md_table)?;
 
     // Export output file path as a GitHub Actions output for other steps to consume
-    let output_file = out_file_path.to_str().unwrap();
-    gha_output!(output_file);
+    let outputfile = out_file_path.to_str().unwrap();
+    gha_output!(outputfile);
 
     Ok(())
 }
