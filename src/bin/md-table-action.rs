@@ -36,7 +36,7 @@ fn main() -> GitHubActionResult {
     let out_file_path = runner_temp_dir.join("markdown-table-".to_owned() + in_file_stem + ".md");
 
     // Write markdown table to output file
-    std::fs::write(&out_file_path, md_table)?;
+    std::fs::write(&out_file_path, md_table+"\n")?;
 
     // Export output file path as a GitHub Actions output for other steps to consume
     let outputfile = out_file_path.to_str().unwrap();
