@@ -19,7 +19,23 @@ Generate markdown tables from a JSON definition for publication on [locatarr.git
 }
 ```
 
-### Generate from a file
+### GitHub Actions Format
+
+```yaml
+- name: Generate MD Table
+  id: generate-md-table
+  uses: Locatarr/markdown-table-generator@<version> # Specific release version tag to pull from
+  with:
+    file-path: ${{ github.workspace }}/my-json.json
+```
+
+When run the action will generate a file that will live for the rest of the job at a random location on disk.
+To obtain the file name, use the `output-file` step output.
+(Ex. `cat ${{ steps.generate-md-table.outputs.output-file }}`)
+
+### CLI
+
+#### Generate from a file
 
 ```bash
 $ markdown-table-generator myfile.json
@@ -29,7 +45,7 @@ $ markdown-table-generator myfile.json
 ...
 ```
 
-### Generate from standard input
+#### Generate from standard input
 
 ```bash
 $ cat myfile.json | markdown-table-generator -
