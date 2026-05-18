@@ -1,5 +1,7 @@
 //! Create markdown tables for [Locatarr](https://github.com/Locatarr/Locatarr)
 
+#![warn(clippy::pedantic)]
+
 use itertools::Itertools;
 
 use models::{Application, Applications};
@@ -10,26 +12,27 @@ pub mod models;
 ///
 /// The resulting table is the minimum viable table and is not formatted in any way.
 pub fn generate_md_table(apps: &Applications) -> String {
-    "| **Application** | **Description** | **Github** | **Reddit** |\n|-|-|-|-|\n".to_owned() +
-    &apps.applications
-        .iter()
-        .sorted()
-        .map(generate_md_row)
-        .join("\n")
+    "| **Application** | **Description** | **Github** | **Reddit** |\n|-|-|-|-|\n".to_owned()
+        + &apps
+            .applications
+            .iter()
+            .sorted()
+            .map(generate_md_row)
+            .join("\n")
 }
 
 /// Create one markdown table row from a single [Application]
 ///
-/// Copies the [Application::name] and [Application::description] fields in, and transforms [Application::github_slug] and
-/// [Application::subreddit] into proper markdown links.
+/// Copies the [`Application::name`] and [`Application::description`] fields in, and transforms [`Application::github_slug`] and
+/// [`Application::subreddit`] into proper markdown links.
 fn generate_md_row(app: &Application) -> String {
     let github_link = match &app.github_slug {
-        Some(slug) => format!("[{}](https://github.com/{})", slug, slug),
+        Some(slug) => format!("[{slug}](https://github.com/{slug})"),
         None => String::new(),
     };
 
     let subreddit_link = match &app.subreddit {
-        Some(sub) => format!("[{}](https://reddit.com/{})", sub, sub),
+        Some(sub) => format!("[{sub}](https://reddit.com/{sub})"),
         None => String::new(),
     };
 

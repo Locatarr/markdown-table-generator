@@ -1,5 +1,7 @@
 //! The models sub-crate holds all of the general purpose structs used throughout the library.
 
+use std::borrow::ToOwned;
+
 use serde::{Deserialize, Serialize};
 
 /// Struct for the collection of a list of applications so that [serde] can deserialize a JSON
@@ -25,6 +27,7 @@ pub struct Application {
 impl Application {
     /// Create a new [Application] from various string references instead of owned strings
     #[allow(dead_code)] // Because I like this function here, but we aren't currently using it anywhere
+    #[must_use]
     pub fn new_from_strs(
         name: &str,
         description: &str,
@@ -34,8 +37,8 @@ impl Application {
         Self {
             name: name.to_owned(),
             description: description.to_owned(),
-            github_slug: github_slug.map(|s| s.to_owned()),
-            subreddit: subreddit.map(|s| s.to_owned()),
+            github_slug: github_slug.map(ToOwned::to_owned),
+            subreddit: subreddit.map(ToOwned::to_owned),
         }
     }
 }

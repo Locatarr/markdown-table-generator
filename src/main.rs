@@ -1,3 +1,5 @@
+#![warn(clippy::pedantic)]
+
 use clap::Parser;
 use std::{path::PathBuf, process::ExitCode};
 
@@ -51,5 +53,5 @@ fn main() -> ExitCode {
 
     println!("{markdown_table}");
 
-    return 0.into();
+    0.into()
 }
