@@ -22,3 +22,6 @@ actions-runner-binary = ["gha_main", "uuid"]
 name = "md-table-action"
 path = "src/bin/md-table-action.rs"
 required-features = ["actions-runner-binary"]
+
+[dev-dependencies]
+similar-asserts = "2.0.0"

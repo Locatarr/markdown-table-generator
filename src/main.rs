@@ -46,7 +46,7 @@ fn main() -> ExitCode {
         Err(e) => {
             eprintln!("could not parse file: {e}");
             return 2.into();
-        },
+        }
     };
 
     let markdown_table = generate_md_table(&apps_json);

@@ -1,7 +1,7 @@
 use std::{env, path::PathBuf};
 
 use gha_main::anyhow;
-use gha_main::{gha_main, gha_output, GitHubActionResult};
+use gha_main::{GitHubActionResult, gha_main, gha_output};
 use uuid::Uuid;
 
 use markdown_table_generator::generate_md_table;
@@ -36,7 +36,7 @@ fn main() -> GitHubActionResult {
     let out_file_path = runner_temp_dir.join("markdown-table-".to_owned() + in_file_stem + ".md");
 
     // Write markdown table to output file
-    std::fs::write(&out_file_path, md_table+"\n")?;
+    std::fs::write(&out_file_path, md_table + "\n")?;
 
     // Export output file path as a GitHub Actions output for other steps to consume
     let outputfile = out_file_path.to_str().unwrap();

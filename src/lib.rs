@@ -27,12 +27,18 @@ pub fn generate_md_table(apps: &Applications) -> String {
 /// [`Application::subreddit`] into proper markdown links.
 fn generate_md_row(app: &Application) -> String {
     let github_link = match &app.github_slug {
-        Some(slug) => format!("[{slug}](https://github.com/{slug})"),
+        Some(slug) => {
+            let slug = slug.replace('|', "\\|");
+            format!("[{slug}](https://github.com/{slug})")
+        }
         None => String::new(),
     };
 
     let subreddit_link = match &app.subreddit {
-        Some(sub) => format!("[{sub}](https://reddit.com/{sub})"),
+        Some(sub) => {
+            let sub = sub.replace('|', "\\|");
+            format!("[{sub}](https://reddit.com/{sub})")
+        }
         None => String::new(),
     };
 
@@ -40,6 +46,100 @@ fn generate_md_row(app: &Application) -> String {
     // | Application | Description | GitHub | Reddit |
     format!(
         "| {} | {} | {} | {} |",
-        app.name, app.description, github_link, subreddit_link
+        app.name.replace('|', "\\|"),
+        app.description.replace('|', "\\|"),
+        github_link,
+        subreddit_link
     )
+}
+
+#[cfg(test)]
+mod tests {
+    use similar_asserts::assert_eq;
+
+    use super::*;
+
+    #[test]
+    fn test_empty_table() {
+        let apps = Applications {
+            applications: vec![],
+        };
+
+        assert_eq!(
+            generate_md_table(&apps),
+            "| **Application** | **Description** | **Github** | **Reddit** |\n|-|-|-|-|\n"
+        );
+    }
+
+    #[test]
+    fn test_table() {
+        let apps = Applications {
+            applications: vec![
+                Application::new_from_strs(
+                    "Project 1",
+                    "Epic description.",
+                    Some("example/project1"),
+                    None,
+                ),
+                Application::new_from_strs(
+                    "Project 2",
+                    "Second epic description.",
+                    None,
+                    Some("r/project2"),
+                ),
+                Application::new_from_strs(
+                    "Project 3",
+                    "Third epic description.",
+                    Some("example/project3"),
+                    Some("r/project3"),
+                ),
+            ],
+        };
+
+        assert_eq!(
+            generate_md_table(&apps),
+            r"| **Application** | **Description** | **Github** | **Reddit** |
+|-|-|-|-|
+| Project 1 | Epic description. | [example/project1](https://github.com/example/project1) |  |
+| Project 2 | Second epic description. |  | [r/project2](https://reddit.com/r/project2) |
+| Project 3 | Third epic description. | [example/project3](https://github.com/example/project3) | [r/project3](https://reddit.com/r/project3) |"
+        );
+    }
+
+    #[test]
+    fn test_basic_row() {
+        let app = Application::new_from_strs("name", "description", None, None);
+
+        assert_eq!(generate_md_row(&app), "| name | description |  |  |");
+    }
+
+    #[test]
+    fn test_full_row() {
+        let app = Application::new_from_strs(
+            "Full Apps",
+            "Full Description",
+            Some("example/test1"),
+            Some("r/test1"),
+        );
+
+        assert_eq!(
+            generate_md_row(&app),
+            "| Full Apps | Full Description | [example/test1](https://github.com/example/test1) | [r/test1](https://reddit.com/r/test1) |"
+        );
+    }
+
+    #[test]
+    fn test_pipe_char_in_row() {
+        let app = Application::new_from_strs(
+            "Full|Apps",
+            "Full|Description",
+            Some("exa|ple/test1"),
+            Some("r/tes|t1"),
+        );
+
+        assert_eq!(
+            generate_md_row(&app),
+            "| Full\\|Apps | Full\\|Description | [exa\\|ple/test1](https://github.com/exa\\|ple/test1) | [r/tes\\|t1](https://reddit.com/r/tes\\|t1) |"
+        );
+    }
 }
