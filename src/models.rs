@@ -26,7 +26,6 @@ pub struct Application {
 
 impl Application {
     /// Create a new [Application] from various string references instead of owned strings
-    #[allow(dead_code)] // Because I like this function here, but we aren't currently using it anywhere
     #[must_use]
     pub fn new_from_strs(
         name: &str,
