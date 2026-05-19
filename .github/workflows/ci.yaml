@@ -1,0 +1,58 @@
+name: "Build/Test/Lint Rust Code"
+
+on:
+  push:
+
+# Make sure workflow fails on all warnings, including Clippy lints
+env:
+  RUSTFLAGS: "-Dwarnings"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      # - name: Install host target
+      #   run: rustup target add ${{ matrix.target }}
+      #
+      # - name: Install musl-tools
+      #   run: sudo apt-get install -y musl-tools
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Build CLI Binary
+        run: cargo build
+
+      - name: Build Action Binary
+        run: cargo build --bin md-table-action --features actions-runner-binary
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      # - name: Install host target
+      #   run: rustup target add ${{ matrix.target }}
+      #
+      # - name: Install musl-tools
+      #   run: sudo apt-get install -y musl-tools
+
+      - uses: Swatinem/rust-cache@v2
+
+      - run: cargo test
+
+  lint-clippy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      # - name: Install host target
+      #   run: rustup target add ${{ matrix.target }}
+      #
+      # - name: Install musl-tools
+      #   run: sudo apt-get install -y musl-tools
+
+      - uses: Swatinem/rust-cache@v2
+
+      - run: cargo clippy --all-targets --all-features
