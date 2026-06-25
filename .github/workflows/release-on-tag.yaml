@@ -28,7 +28,7 @@ jobs:
       binary_name: md-table-action${{ matrix.file_extension }}
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: Swatinem/rust-cache@v2
 
